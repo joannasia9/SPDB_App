@@ -1,3 +1,119 @@
 <resources>
-    <string name="app_name">SPDB_App</string>
+    <string name="app_name">SPDB_app</string>
+    <string name="title">Miejsca</string>
+    <string name="from">Z:</string>
+    <string name="to">Do:</string>
+    <string name="select_transport">Wybierz środek transportu</string>
+    <string name="my_location">Moja lokalizacja</string>
+    <string name="min">min</string>
+    <string name="_0">0</string>
+    <string name="h">h</string>
+    <string name="travel_time">Czas podróży:</string>
+    <string name="transport">Środek transportu</string>
+    <string name="category">Kategoria</string>
+    <string name="search">Szukaj</string>
+    <string name="place_name">Nazwa miejsca</string>
+    <string name="id">Id.</string>
+
+    <string-array name="transport">
+        <item>Dowolny</item>
+        <item>Pieszo</item>
+        <item>Samochód</item>
+        <item>Komunikacja miejska</item>
+        <item>Pociąg</item>
+    </string-array>
+
+    <string name="title_activity_maps">Mapa</string>
+    <string name="all">Wszystkie</string>
+    <string name="visit_lenght">Długość pobytu</string>
+    <string name="days">dni</string>
+    <string name="location_disabled">Lokalizacja jest wyłączona</string>
+    <string name="turn_loc_on">Czy chcesz włączyć lokalizację?</string>
+    <string name="yes">TAK</string>
+    <string name="no">NIE</string>
+    <string name="quit">Wyjdź</string>
+    <string name="warning">Uwaga!</string>
+    <string name="reason">Aplikacja nie będzie działać poprawnie.</string>
+    <string name="change_mind">Zezwól na dostęp do lokalizacji.</string>
+    <string name="okay">OK</string>
+    <string name="coordinates">Współrzędne:</string>
+    <string name="metres">m</string>
+    <string name="km">km</string>
+
+
+    <string-array name="categories_eng">
+        <item>airport</item>
+        <item>amusement_park</item>
+        <item>aquarium</item>
+        <item>art_gallery</item>
+        <item>bar</item>
+        <item>bowling_alley</item>
+        <item>bus_station</item>
+        <item>cafe</item>
+        <item>campground</item>
+        <item>casino</item>
+        <item>cemetery</item>
+        <item>church</item>
+        <item>city_hall</item>
+        <item>courthouse</item>
+        <item>embassy</item>
+        <item>gym</item>
+        <item>hindu_temple</item>
+        <item>lodging</item>
+        <item>meal_takeaway</item>
+        <item>mosque</item>
+        <item>movie_theater</item>
+        <item>museum</item>
+        <item>night_club</item>
+        <item>park</item>
+        <item>parking</item>
+        <item>restaurant</item>
+        <item>rv_park</item>
+        <item>spa</item>
+        <item>stadium</item>
+        <item>subway_station</item>
+        <item>synagogue</item>
+        <item>taxi_stand</item>
+        <item>train_station</item>
+        <item>travel_agency</item>
+        <item>zoo</item>
+    </string-array>
+
+    <string-array name="categories_pl">
+        <item>Lotnisko</item>
+        <item>Park rozrywki</item>
+        <item>Akwarium</item>
+        <item>Galeria sztuki</item>
+        <item>Bar</item>
+        <item>Kręgle</item>
+        <item>Dworzec autobusowy</item>
+        <item>Kawiarnia</item>
+        <item>Obozowisko</item>
+        <item>Kasyno</item>
+        <item>Cmentarz</item>
+        <item>Kościół</item>
+        <item>Ratusz</item>
+        <item>Sąd</item>
+        <item>Ambasada</item>
+        <item>Siłownia</item>
+        <item>Świątynia indyjska</item>
+        <item>Kwatera</item>
+        <item>Posiłek na wynos</item>
+        <item>Meczet</item>
+        <item>Kino</item>
+        <item>Muzeum</item>
+        <item>Klub nocny</item>
+        <item>Park</item>
+        <item>Parking</item>
+        <item>Restauracja</item>
+        <item>Park rekreacyjny</item>
+        <item>SPA</item>
+        <item>Stadion</item>
+        <item>Stacja metra</item>
+        <item>Synagoga</item>
+        <item>Postój taksówek</item>
+        <item>Stacja kolejowa</item>
+        <item>Biuro podróży</item>
+        <item>Ogród zoologiczny</item>
+    </string-array>
 </resources>
