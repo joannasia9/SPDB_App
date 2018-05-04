@@ -1,4 +1,4 @@
-package com.spdb.spdb_app;
+package com.spdb.spdb_app.helpfulComponents;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,11 +13,14 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.spdb.spdb_app.MainActivity;
+import com.spdb.spdb_app.R;
 
 public class PlacesSelectionHelper {
     private Activity activity;
@@ -26,7 +29,7 @@ public class PlacesSelectionHelper {
     private CharSequence location;
 
    public interface OnReceivedPlaceCallback{
-       void onPlaceReceived(CharSequence receivedPlaceName);
+       void onPlaceReceived(CharSequence receivedPlaceName,Place place);
        void onPlaceFailure(Exception e);
    }
 
@@ -116,7 +119,7 @@ public class PlacesSelectionHelper {
                   public void onComplete(@NonNull Task<PlaceLikelihoodBufferResponse> task) {
                       PlaceLikelihoodBufferResponse likelyPlaces = task.getResult();
                       location = likelyPlaces.get(0).getPlace().getName();
-                      if(location!=null)callback.onPlaceReceived(location); else callback.onPlaceFailure(task.getException());
+                      if(location!=null)callback.onPlaceReceived(location,likelyPlaces.get(0).getPlace().freeze()); else callback.onPlaceFailure(task.getException());
                       likelyPlaces.release();
                       }
               });

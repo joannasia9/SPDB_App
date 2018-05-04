@@ -1,19 +1,28 @@
-package com.spdb.spdb_app;
+package com.spdb.spdb_app.helpfulComponents;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.spdb.spdb_app.R;
+
 public class FormValidator {
-    Context context;
+    private Context context;
 
     public FormValidator(Context c){
         this.context = c;
     }
 
-    public void validate(){
-
+    public boolean isValidForm(Place startPlace){
+        if(startPlace!=null){
+            showAlert();
+            return false;
+        } else return true;
     }
 
     public void setLimit(final EditText editText, final int value){
@@ -56,5 +65,20 @@ public class FormValidator {
         }
         // only got here if we didn't return false
         return true;
+    }
+
+
+    private void showAlert(){
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setTitle(R.string.warning)
+                .setMessage(R.string.select_start_place)
+                .setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .create();
+        dialog.show();
     }
 }

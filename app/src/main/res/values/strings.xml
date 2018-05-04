@@ -42,6 +42,7 @@
     <string name="distance">Odległość</string>
     <string name="whatever">Dowolna</string>
     <string name="wrong_v">Niepoprawna wartość</string>
+    <string name="select_start_place">Wybierz punkt początkowy</string>
 
 
     <string-array name="categories_eng">
