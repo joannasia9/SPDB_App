@@ -3,7 +3,7 @@ package com.spdb.spdb_app;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class PlacesListActivity extends AppCompatActivity {
+public class PlacesListActivity extends MyBaseActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

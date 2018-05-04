@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <EditText
-        android:id="@+id/from"
+
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/from"
@@ -20,8 +22,9 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/myLocationImageView"
         app:layout_constraintEnd_toStartOf="@+id/myLocationImageView"
+
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/myLocationImageView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/myLocationImageView"
@@ -68,6 +71,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/travel_time"
+        android:textColor="@color/darkBlue"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,6 +85,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/_0"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView7"
         app:layout_constraintStart_toEndOf="@+id/textView7"
@@ -94,6 +99,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/h"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/hours"
         app:layout_constraintStart_toEndOf="@+id/hours"
@@ -107,6 +113,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/_0"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView9"
         app:layout_constraintStart_toEndOf="@+id/textView9"
@@ -120,6 +127,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/min"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/mins"
         app:layout_constraintStart_toEndOf="@+id/mins"
@@ -136,6 +144,7 @@
         android:hint="@string/all"
         android:inputType="textPersonName"
         android:textAlignment="center"
+        android:textColor="@color/lightBlue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView13" />
@@ -147,10 +156,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/transport"
+        android:textColor="@color/darkBlue"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/from" />
+        app:layout_constraintTop_toBottomOf="@+id/place_autocomplete_fragment" />
 
     <TextView
         android:id="@+id/textView13"
@@ -159,6 +169,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/category"
+        android:textColor="@color/darkBlue"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -172,8 +183,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/button_background"
         android:onClick="searchPlaces"
         android:text="@string/search"
+        android:textColor="@color/cardview_light_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -186,51 +199,25 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/visit_lenght"
+        android:textColor="@color/darkBlue"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/category" />
 
     <EditText
-        android:id="@+id/daysValue"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/_0"
-        android:inputType="textPersonName"
-        android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView14" />
-
-    <TextView
-        android:id="@+id/textView15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/days"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/daysValue"
-        app:layout_constraintStart_toEndOf="@+id/daysValue"
-        app:layout_constraintTop_toTopOf="@+id/daysValue" />
-
-    <EditText
         android:id="@+id/hoursValue"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="70dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/_0"
-        android:inputType="textPersonName"
+        android:inputType="datetime"
         android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="@+id/daysValue"
-        app:layout_constraintStart_toEndOf="@+id/textView15"
-        app:layout_constraintTop_toTopOf="@+id/daysValue" />
+        android:textColor="@color/lightBlue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
     <TextView
         android:id="@+id/textView16"
@@ -240,6 +227,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/h"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/hoursValue"
         app:layout_constraintStart_toEndOf="@+id/hoursValue"
@@ -250,14 +238,15 @@
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="@string/_0"
-        android:inputType="textPersonName"
+        android:inputType="datetime"
         android:textAlignment="center"
+        android:textColor="@color/lightBlue"
         app:layout_constraintBottom_toBottomOf="@+id/hoursValue"
-        app:layout_constraintStart_toEndOf="@+id/textView16"
+        app:layout_constraintEnd_toStartOf="@+id/textView17"
         app:layout_constraintTop_toTopOf="@+id/hoursValue" />
 
     <TextView
@@ -265,12 +254,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="70dp"
         android:layout_marginTop="8dp"
         android:text="@string/min"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/minsValue"
-        app:layout_constraintStart_toEndOf="@+id/minsValue"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/minsValue" />
 
     <TextView
@@ -279,11 +269,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Odległość"
+        android:text="@string/distance"
+        android:textColor="@color/darkBlue"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/daysValue" />
+        app:layout_constraintTop_toBottomOf="@+id/hoursValue" />
 
     <SeekBar
         android:id="@+id/radiusSeekBar"
@@ -304,6 +295,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:text="@string/_0"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintStart_toEndOf="@+id/textView"
@@ -317,26 +309,24 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="@string/km"
+        android:textColor="@color/lightBlue"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/radiusValue"
         app:layout_constraintStart_toEndOf="@+id/radiusValue"
         app:layout_constraintTop_toTopOf="@+id/radiusValue" />
 
     <CheckBox
-        android:id="@+id/checkBox2"
+        android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:text="Dowolna"
-        android:textColor="@color/colorPrimary"
+        android:text="@string/whatever"
+        android:textColor="@color/lightBlue"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/radiusUnit"
+        app:layout_constraintStart_toStartOf="@+id/minsValue"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
 </android.support.constraint.ConstraintLayout>

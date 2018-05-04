@@ -1,55 +1,66 @@
 package com.spdb.spdb_app;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.spdb.spdb_app.models.Category;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 
-public class MainActivity extends AppCompatActivity {
-    EditText fromPlace;
+public class MainActivity extends MyBaseActivity {
+    PlaceAutocompleteFragment autocompleteFragment;
     AutoCompleteTextView category;
-    EditText daysValue, hoursValue, minsValue;
+    EditText hoursValue, minsValue;
     Spinner transport;
     TextView hours, minutes;
     SeekBar seekBar, radiusSeekBar;
     TextView radiusValue;
+    CheckBox checkBox;
     public static final int LOCATION_PERMISSIONS_REQUEST = 111;
     Activity activity;
     Realm realm;
+    PlacesSelectionHelper placesSelectionHelper;
+    FormValidator validator = new FormValidator(this);
+    PlacesSelectionHelper.OnReceivedPlaceCallback onReceivedPlaceCallback = new PlacesSelectionHelper.OnReceivedPlaceCallback() {
+        @Override
+        public void onPlaceReceived(CharSequence receivedPlaceName) {
+            autocompleteFragment.setText(receivedPlaceName);
+
+        }
+
+        @Override
+        public void onPlaceFailure(Exception e) {
+            autocompleteFragment.setText("");
+            e.printStackTrace();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        placesSelectionHelper = new PlacesSelectionHelper(this, this);
         String[] categories_eng = getResources().getStringArray(R.array.categories_eng);
         String[] categories_pl = getResources().getStringArray(R.array.categories_pl);
-
+        
         //save categories to the Realm local database
         realm = Realm.getDefaultInstance();
         realm.beginTransaction();
@@ -63,17 +74,20 @@ public class MainActivity extends AppCompatActivity {
 
         activity = this;
 
-        fromPlace = findViewById(R.id.from);
         transport = findViewById(R.id.spinner);
 
         hours = findViewById(R.id.hours);
         minutes = findViewById(R.id.mins);
         seekBar = findViewById(R.id.seekBar);
         category = findViewById(R.id.category);
-        daysValue = findViewById(R.id.daysValue);
+
+
         hoursValue = findViewById(R.id.hoursValue);
         minsValue = findViewById(R.id.minsValue);
+        validator.setLimit(hoursValue,23);
+        validator.setLimit(minsValue,59);
 
+        checkBox = findViewById(R.id.checkBox);
         radiusSeekBar = findViewById(R.id.radiusSeekBar);
         radiusValue = findViewById(R.id.radiusValue);
 
@@ -125,63 +139,29 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1 ,categories_pl);
         category.setAdapter(categoriesAdapter);
 
-/*
-        realm.beginTransaction();
-        RealmResults<Category> cat = realm.where(Category.class)
-                .equalTo("polishItemName","Lotnisko")
-                .findAll();
-        if(cat.size()>0)  category.setText(cat.get(0).getRealCategoryName());*/
 
+        autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                String coordinates = place.getLatLng().toString();
+                Log.e("COORDINATES", "onPlaceSelected: " + coordinates );
+            }
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
     }
 
     public void searchPlaces(View view) {
     }
 
     public void getCurrentLocation(View view) {
-        askForPermissions();
-        fromPlace.setText(getCurrentLocation());
-    }
-
-    private void askForPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) || ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                showExplainDialog();
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                        LOCATION_PERMISSIONS_REQUEST);
-            }
-        }
-
-    }
-
-    private void showExplainDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.warning)
-                .setMessage(getString(R.string.reason) + "\n" + getString(R.string.change_mind))
-                .setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(activity,
-                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                                LOCATION_PERMISSIONS_REQUEST);
-                    }
-                })
-                .setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                        activity.finish();
-                    }
-                }).create();
-
-        dialog.show();
+       placesSelectionHelper.getCurrentLocation(onReceivedPlaceCallback);
     }
 
     @Override
@@ -191,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             case LOCATION_PERMISSIONS_REQUEST: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getCurrentLocation();
+                    placesSelectionHelper.getCurrentLocation(onReceivedPlaceCallback);
                 }
                 break;
             }
@@ -199,47 +179,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String getCurrentLocation() {
-        String location = "";
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        assert locationManager != null;
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.location_disabled);
-            builder.setMessage(R.string.turn_loc_on);
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                }
-            });
-            builder.setNegativeButton(R.string.no, null);
-            builder.create().show();
-        } else {
-            Criteria criteria = new Criteria();
-            String provider = locationManager.getBestProvider(criteria, false);
 
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                        LOCATION_PERMISSIONS_REQUEST);
-            } else {
-
-            Location loc = locationManager.getLastKnownLocation(provider);
-            double longitude = loc.getLongitude();
-            double latitude = loc.getLatitude();
-                longitude *= 1000;
-                longitude = Math.round(longitude);
-                longitude /= 1000;
-
-                latitude *= 1000;
-                latitude = Math.round(latitude);
-                latitude /= 1000;
-
-                location = getString(R.string.coordinates) +" "+longitude+", "+latitude;
-        }}
-        return location;
-    }
 
 
 }

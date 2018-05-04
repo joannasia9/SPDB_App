@@ -39,6 +39,9 @@
     <string name="coordinates">Współrzędne:</string>
     <string name="metres">m</string>
     <string name="km">km</string>
+    <string name="distance">Odległość</string>
+    <string name="whatever">Dowolna</string>
+    <string name="wrong_v">Niepoprawna wartość</string>
 
 
     <string-array name="categories_eng">
