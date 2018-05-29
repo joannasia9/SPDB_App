@@ -58,10 +58,16 @@ public class PlacesListAdapter extends BaseAdapter {
         PlaceModel model = filteredPlaces.get(position);
 
         singlePlaceViewHolder.placeName.setText(model.getPlaceName());
-        singlePlaceViewHolder.visitLengthValue.setText("Czas trwania wizyty: "+maxVisitValue);
+        String l = context.getString(R.string.v_len)+ maxVisitValue;
+        singlePlaceViewHolder.visitLengthValue.setText(l);
 
-        singlePlaceViewHolder.arrivalTimeValue.setText("Dotrzesz za około: " + travelLenght[position]);
-        //singlePlaceViewHolder.arrivalTimeValue.setText("Nie określono dokładnego czasu dotarcia");
+        String at;
+        if(travelLenght[position]!=null){
+             at= context.getString(R.string.arr_time) + travelLenght[position];
+        } else {
+            at = context.getString(R.string.no_spec);
+        }
+        singlePlaceViewHolder.arrivalTimeValue.setText(at);
         singlePlaceViewHolder.rating.setMax(5);
         singlePlaceViewHolder.rating.setRating(model.getRating());
 

@@ -56,6 +56,9 @@
     <string name="whatever">Dowolna</string>
     <string name="wrong_v">Niepoprawna wartość</string>
     <string name="select_start_place">Wybierz punkt początkowy</string>
+    <string name="v_len">Czas trwania wizyty:</string>
+    <string name="arr_time">Dotrzesz za około:</string>
+    <string name="no_spec">Nie określono dokładnego czasu dotarcia</string>
 
 
     <string-array name="categories_eng">
