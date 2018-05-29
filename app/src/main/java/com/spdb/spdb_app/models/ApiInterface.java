@@ -23,7 +23,7 @@ public interface ApiInterface {
 
     //distances
     @GET("distancematrix/json?")
-    Call<TravelTimeModel> getTravelTimeDatas(@Query("origins") String origins, @Query("destinations") String destinations, @Query("key") String apikey);
+    Call<TravelTimeModel> getTravelTimeDatas(@Query("language") String language, @Query("origins") String origins, @Query("destinations") String destinations, @Query("key") String apikey);
 
 //    @GET("/nearbysearch/json?location={location_latitude},{location_latitude}&radius={radius}&key={apikey}")
 //    Call<PlaceModel[]> getSomePlaces(@Path("location_latitude") String latitude, @Path("location_longitude") String longitude, @Path("radius") String radius, @Path("apikey") String apikey);

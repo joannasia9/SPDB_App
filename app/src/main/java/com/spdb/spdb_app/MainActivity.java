@@ -265,7 +265,7 @@ public class MainActivity extends MyBaseActivity {
     RowsModel[] rowsModels;
     ElementModel[] elementModels;
     ArrayList<PlaceModel> allFilteredPlaces;
-    String[] travelLenght;
+    ArrayList<String> travelLenght;
     
 private void filterPlacesByTravelTimeAndDistance(String apiKey, ApiInterface apiInterface, final long selectedTime, final long selectedDistance, final PlaceModel[] placesToFilter, String currentLocation){
 
@@ -278,7 +278,7 @@ private void filterPlacesByTravelTimeAndDistance(String apiKey, ApiInterface api
                     } else  builder.append("place_id:").append(placesToFilter[i].getPlaceId()); }
 
                 String destinations = builder.toString(); // from placesToFilter
-                Call<TravelTimeModel> distancesRequest = apiInterface.getTravelTimeDatas(currentLocation,destinations,apiKey);
+                Call<TravelTimeModel> distancesRequest = apiInterface.getTravelTimeDatas("pl",currentLocation,destinations,apiKey);
 
                 distancesRequest.enqueue(new Callback<TravelTimeModel>() {
                     @Override
@@ -287,18 +287,17 @@ private void filterPlacesByTravelTimeAndDistance(String apiKey, ApiInterface api
                         if(travelTimeModel != null){
                             rowsModels = travelTimeModel.getElements();
                             allFilteredPlaces = new ArrayList<>();
+                            travelLenght = new ArrayList<>();
                             if(rowsModels.length>0){
                                 for (RowsModel rowModel:rowsModels) {
                                     ElementModel[] elementModels = rowModel.getElements();
 
                                     if (elementModels!=null) if (elementModels.length>0){
-                                        travelLenght = new String[elementModels.length];
-
                                         for(int i=0; i<elementModels.length;i++){
                                             if(elementModels[i].getDistance().getValueValue()<selectedDistance
                                                     && elementModels[i].getDuration().getValueValue()<selectedTime){
                                                 allFilteredPlaces.add(placesToFilter[i]);
-                                                travelLenght[i]=elementModels[i].getDuration().getTextValue();
+                                                travelLenght.add(elementModels[i].getDuration().getTextValue());
                                             }
                                         }
                                     }
@@ -313,7 +312,7 @@ private void filterPlacesByTravelTimeAndDistance(String apiKey, ApiInterface api
 
                             Log.e("FILTERED PLACES: ", builder1.toString());
                         }
-                        if(allFilteredPlaces.size()!=0&&travelLenght.length!=0){
+                        if(allFilteredPlaces.size()!=0&&travelLenght.size()!=0){
                             showFilteredPlacesListed(mainContext,allFilteredPlaces,travelLenght);
                         } else {
                             showToastOnUI("No results found.");
@@ -333,7 +332,7 @@ private void filterPlacesByTravelTimeAndDistance(String apiKey, ApiInterface api
         placesSelectionHelper.getCurrentLocation(onReceivedPlaceCallback);
     }
 
-    private void showFilteredPlacesListed(Context c,ArrayList<PlaceModel> filteredPlaces, String[] travelLenght){
+    private void showFilteredPlacesListed(Context c,ArrayList<PlaceModel> filteredPlaces, ArrayList<String> travelLenght){
     ListView listView;
     Button okButton;
     PlacesListAdapter adapter = new PlacesListAdapter(c,filteredPlaces,getVisitLenghtStringValue(hoursValue,minsValue),travelLenght);

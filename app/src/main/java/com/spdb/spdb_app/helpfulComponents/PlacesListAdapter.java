@@ -16,9 +16,9 @@ public class PlacesListAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<PlaceModel> filteredPlaces;
     private  String maxVisitValue;
-    private String[] travelLenght;
+    private ArrayList<String> travelLenght;
 
- public PlacesListAdapter(Context c, ArrayList<PlaceModel> places, String maxLenghtValue, String[] travelLenght){
+ public PlacesListAdapter(Context c, ArrayList<PlaceModel> places, String maxLenghtValue, ArrayList<String> travelLenght){
     this.context = c;
     this.filteredPlaces = places;
     this.maxVisitValue= maxLenghtValue;
@@ -62,8 +62,8 @@ public class PlacesListAdapter extends BaseAdapter {
         singlePlaceViewHolder.visitLengthValue.setText(l);
 
         String at;
-        if(travelLenght[position]!=null){
-             at= context.getString(R.string.arr_time) + " " + travelLenght[position];
+        if(travelLenght.get(position)!=null){
+             at= context.getString(R.string.arr_time) + " " + travelLenght.get(position);
         } else {
             at = context.getString(R.string.no_spec);
         }
