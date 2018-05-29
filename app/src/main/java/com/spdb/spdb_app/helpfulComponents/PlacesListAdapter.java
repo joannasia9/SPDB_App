@@ -58,12 +58,12 @@ public class PlacesListAdapter extends BaseAdapter {
         PlaceModel model = filteredPlaces.get(position);
 
         singlePlaceViewHolder.placeName.setText(model.getPlaceName());
-        String l = context.getString(R.string.v_len)+ maxVisitValue;
+        String l = context.getString(R.string.v_len)+" "+ maxVisitValue;
         singlePlaceViewHolder.visitLengthValue.setText(l);
 
         String at;
         if(travelLenght[position]!=null){
-             at= context.getString(R.string.arr_time) + travelLenght[position];
+             at= context.getString(R.string.arr_time) + " " + travelLenght[position];
         } else {
             at = context.getString(R.string.no_spec);
         }
