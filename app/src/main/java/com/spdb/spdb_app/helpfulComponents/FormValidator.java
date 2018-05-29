@@ -19,7 +19,7 @@ public class FormValidator {
     }
 
     public boolean isValidForm(Place startPlace){
-        if(startPlace!=null){
+        if(startPlace==null){
             showAlert();
             return false;
         } else return true;
@@ -68,7 +68,7 @@ public class FormValidator {
     }
 
 
-    private void showAlert(){
+    public void showAlert(){
         AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle(R.string.warning)
                 .setMessage(R.string.select_start_place)

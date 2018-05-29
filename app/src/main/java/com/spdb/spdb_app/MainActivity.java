@@ -1,25 +1,44 @@
 package com.spdb.spdb_app;
 
-
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.spdb.spdb_app.helpfulComponents.DataInterpreter;
 import com.spdb.spdb_app.helpfulComponents.FormValidator;
+import com.spdb.spdb_app.helpfulComponents.PlacesListAdapter;
 import com.spdb.spdb_app.helpfulComponents.PlacesSelectionHelper;
+import com.spdb.spdb_app.models.ApiClient;
+import com.spdb.spdb_app.models.ApiInterface;
+import com.spdb.spdb_app.models.ElementModel;
+import com.spdb.spdb_app.models.PlaceModel;
+import com.spdb.spdb_app.models.ResultsModels;
+import com.spdb.spdb_app.models.RowsModel;
+import com.spdb.spdb_app.models.TravelTimeModel;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends MyBaseActivity {
     PlaceAutocompleteFragment autocompleteFragment;
@@ -55,19 +74,23 @@ public class MainActivity extends MyBaseActivity {
     String[] categories_eng;
     //items necessary to search places:
     int transportWayPosition = 0;
-    int travelTimeMins = 0;
+    long travelTimeSecs = 0;
     int selectedCatPosition;
     String selectedCategory;
     int visitLenghtMins=0;
-    int radius = 0;
+    long radius = 0;
+    private ResultsModels models;
+    String placeType = "";
+    String locationString="";
 
+    Context mainContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        mainContext = this;
         placesSelectionHelper = new PlacesSelectionHelper(this, this);
 
         categories_pl = getResources().getStringArray(R.array.categories_pl);
@@ -110,7 +133,7 @@ public class MainActivity extends MyBaseActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                travelTimeMins = progress;
+                travelTimeSecs = progress*60;
 
                 if (progress > 60) {
                     int hValue = Math.round(progress / 60);
@@ -135,11 +158,11 @@ public class MainActivity extends MyBaseActivity {
             }
         });
 
-        radiusSeekBar.setMax(100);
+        radiusSeekBar.setMax(50);
         radiusSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                radius = progress;
+                radius = progress*1000;
 
                 radiusValue.setText(String.valueOf(progress));
 
@@ -160,19 +183,8 @@ public class MainActivity extends MyBaseActivity {
         });
 
         ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, categories_pl);
+
         category.setAdapter(categoriesAdapter);
-        category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedCatPosition = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -182,6 +194,7 @@ public class MainActivity extends MyBaseActivity {
             public void onPlaceSelected(Place place) {
                 startPlace = place;
                 String coordinates = place.getLatLng().toString();
+                locationString = place.getLatLng().latitude+","+place.getLatLng().longitude;
                 Log.e("COORDINATES", "onPlaceSelected: " + coordinates);
             }
 
@@ -192,23 +205,181 @@ public class MainActivity extends MyBaseActivity {
         });
     }
 
+
+
+
     public void searchPlaces(View view) {
-        if (validator.isValidForm(startPlace)) {
-            //search specified places using:
 
-            //transportPosition
-            //travelTimeMins
-            //selectedCategory = categories_eng[selectedCatPosition];
-            // visitLenghtMins = getVisitLenghtMinsValue(hoursValue,minsValue);
-            //if(!checkBox.isChecked()) { use radius [km] }else //dowolna odl.
-
-            DataInterpreter interpreter = new DataInterpreter(this);
-            interpreter.searchSpecifiedPlaces();
+        if(radius<500) radius = 500;
+        if(category.getText().toString().trim().equals("")) placeType = categories_eng[0];
+        else {
+            String tmp = category.getText().toString().trim();
+            placeType ="";
+            for (int i = 0; i<categories_pl.length;i++){
+                if(!placeType.equals("")){
+                    continue;
+                }
+                if(categories_pl[i].equals(tmp)) placeType = categories_eng[i];
+            }
         }
-    }
 
+        Log.e("PLACE_TYPE: ", placeType );
+
+        if (validator.isValidForm(startPlace)) {
+            final String API_KEY = getString(R.string.google_maps_key);
+            final ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+
+            final Call<ResultsModels> requestPlacesData;
+            if(!locationString.equals("") ) {
+                requestPlacesData = apiInterface.getSomePlacesWithNoKeyword(locationString,radius,placeType, API_KEY);
+                requestPlacesData.enqueue(new Callback<ResultsModels>() {
+                    @Override
+                    public void onResponse(Call<ResultsModels> call, Response<ResultsModels> response) {
+                        models = response.body();
+                        if(models!=null){
+                            for (PlaceModel model: models.getPlaceModels()) {
+                                Log.e("NOT FILTERED PLACES: ", model.getPlaceName());
+                            }
+
+                            if(travelTimeSecs>0){
+                                filterPlacesByTravelTimeAndDistance(API_KEY,apiInterface,travelTimeSecs,radius,models.getPlaceModels(),locationString);
+                            } else {
+                                allFilteredPlaces = new ArrayList<>();
+                                Collections.addAll(allFilteredPlaces, models.getPlaceModels());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResultsModels> call, Throwable t) {
+                        t.printStackTrace();
+                        Log.e( "onFailure: ", "MAYDAY" );
+                    }
+                });
+            } else validator.showAlert();
+        }
+
+
+}
+
+    RowsModel[] rowsModels;
+    ElementModel[] elementModels;
+    ArrayList<PlaceModel> allFilteredPlaces;
+    String[] travelLenght;
+    
+private void filterPlacesByTravelTimeAndDistance(String apiKey, ApiInterface apiInterface, final long selectedTime, final long selectedDistance, final PlaceModel[] placesToFilter, String currentLocation){
+
+        final StringBuilder builder = new StringBuilder();
+        if(placesToFilter!=null)
+            if (placesToFilter.length != 0) {
+                for(int i=0; i<placesToFilter.length;i++) {
+                    if(i<(placesToFilter.length-1)) {
+                        builder.append("place_id:").append(placesToFilter[i].getPlaceId()).append("|");
+                    } else  builder.append("place_id:").append(placesToFilter[i].getPlaceId()); }
+
+                String destinations = builder.toString(); // from placesToFilter
+                Call<TravelTimeModel> distancesRequest = apiInterface.getTravelTimeDatas(currentLocation,destinations,apiKey);
+
+                distancesRequest.enqueue(new Callback<TravelTimeModel>() {
+                    @Override
+                    public void onResponse(@NonNull Call<TravelTimeModel> call, @NonNull Response<TravelTimeModel> response) {
+                        TravelTimeModel travelTimeModel = response.body();
+                        if(travelTimeModel != null){
+                            rowsModels = travelTimeModel.getElements();
+                            allFilteredPlaces = new ArrayList<>();
+                            if(rowsModels.length>0){
+                                for (RowsModel rowModel:rowsModels) {
+                                    ElementModel[] elementModels = rowModel.getElements();
+
+                                    if (elementModels!=null) if (elementModels.length>0){
+                                        travelLenght = new String[elementModels.length];
+
+                                        for(int i=0; i<elementModels.length;i++){
+                                            if(elementModels[i].getDistance().getValueValue()<selectedDistance
+                                                    && elementModels[i].getDuration().getValueValue()<selectedTime){
+                                                allFilteredPlaces.add(placesToFilter[i]);
+                                                travelLenght[i]=elementModels[i].getDuration().getTextValue();
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+
+                         StringBuilder builder1 = new StringBuilder();
+                            for (PlaceModel fPlace : allFilteredPlaces) {
+                                builder1.append(fPlace.getPlaceName()).append("\n");
+                            }
+
+                            Log.e("FILTERED PLACES: ", builder1.toString());
+                        }
+                        if(allFilteredPlaces.size()!=0&&travelLenght.length!=0){
+                            showFilteredPlacesListed(mainContext,allFilteredPlaces,travelLenght);
+                        } else {
+                            showToastOnUI("No results found.");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<TravelTimeModel> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+
+            }
+
+}
     public void getCurrentLocation(View view) {
         placesSelectionHelper.getCurrentLocation(onReceivedPlaceCallback);
+    }
+
+    private void showFilteredPlacesListed(Context c,ArrayList<PlaceModel> filteredPlaces, String[] travelLenght){
+    ListView listView;
+    Button okButton;
+    PlacesListAdapter adapter = new PlacesListAdapter(c,filteredPlaces,getVisitLenghtStringValue(hoursValue,minsValue),travelLenght);
+
+        final Dialog dialog = new Dialog(c);
+        dialog.setContentView(R.layout.activity_places_list);
+
+        okButton = dialog.findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        listView = dialog.findViewById(R.id.placesListView);
+
+        listView.setAdapter(adapter);
+        dialog.create();
+        dialog.show();
+    }
+
+    private void showToastOnUI(final String message){
+    this.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(getApplicationContext(), message,Toast.LENGTH_LONG).show();
+        }
+    });
+    }
+
+    private String getVisitLenghtStringValue(EditText hoursValue, EditText minsValue) {
+        String h = hoursValue.getText().toString().trim();
+        String m = minsValue.getText().toString().trim();
+
+        String result = "";
+        if(!h.equals("")){
+            if(!m.equals("")){
+                result = h+"h "+m+"min";
+            }else result = h+"h";
+        }else{
+            if (!m.equals("")) {
+                result = "0h "+m+"min";
+            } else result = "10min";
+        }
+        return result;
     }
 
     private int getVisitLenghtMinsValue(EditText hoursValue, EditText minsValue){

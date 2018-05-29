@@ -16,11 +16,24 @@
     <string name="id">Id.</string>
 
     <string-array name="transport">
-        <item>Dowolny</item>
-        <item>Pieszo</item>
-        <item>Samochód</item>
-        <item>Komunikacja miejska</item>
-        <item>Pociąg</item>
+    <item>Dowolny</item>
+    <item>Samochód</item>
+    <item>Pieszo</item>
+    <item>Rower</item> </string-array>
+
+    <string-array name="transit_mode">
+        <item>rail</item>
+        <item>bus</item>
+        <item>subway</item>
+        <item>train</item>
+        <item>tram</item>
+    </string-array>
+
+    <string-array name="mode">
+        <item>transit</item>
+        <item>driving</item>
+        <item>walking</item>
+        <item>bicycling</item>
     </string-array>
 
     <string name="title_activity_maps">Mapa</string>
@@ -46,6 +59,7 @@
 
 
     <string-array name="categories_eng">
+        <item>subway_station</item>
         <item>airport</item>
         <item>amusement_park</item>
         <item>aquarium</item>
@@ -75,7 +89,6 @@
         <item>rv_park</item>
         <item>spa</item>
         <item>stadium</item>
-        <item>subway_station</item>
         <item>synagogue</item>
         <item>taxi_stand</item>
         <item>train_station</item>
@@ -84,6 +97,7 @@
     </string-array>
 
     <string-array name="categories_pl">
+        <item>Stacja metra</item>
         <item>Lotnisko</item>
         <item>Park rozrywki</item>
         <item>Akwarium</item>
@@ -113,7 +127,6 @@
         <item>Park rekreacyjny</item>
         <item>SPA</item>
         <item>Stadion</item>
-        <item>Stacja metra</item>
         <item>Synagoga</item>
         <item>Postój taksówek</item>
         <item>Stacja kolejowa</item>
