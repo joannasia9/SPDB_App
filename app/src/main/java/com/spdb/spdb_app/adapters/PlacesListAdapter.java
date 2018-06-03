@@ -1,7 +1,6 @@
-package com.spdb.spdb_app.helpfulComponents;
+package com.spdb.spdb_app.adapters;
 
 import android.content.Context;
-import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,20 +8,21 @@ import android.widget.BaseAdapter;
 
 import com.spdb.spdb_app.R;
 import com.spdb.spdb_app.models.PlaceModel;
+import com.spdb.spdb_app.viewholders.SinglePlaceViewHolder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlacesListAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<PlaceModel> filteredPlaces;
-    private  String maxVisitValue;
-    private ArrayList<String> travelLenght;
+    private List<PlaceModel> filteredPlaces;
+    private ArrayList<String> travelLenght, maxVisitValues;
 
- public PlacesListAdapter(Context c, ArrayList<PlaceModel> places, String maxLenghtValue, ArrayList<String> travelLenght){
+    public PlacesListAdapter(Context c, List<PlaceModel> places, ArrayList<String> travelLength, ArrayList<String> maxVisitValues){
     this.context = c;
     this.filteredPlaces = places;
-    this.maxVisitValue= maxLenghtValue;
-    this.travelLenght = travelLenght;
+    this.travelLenght = travelLength;
+    this.maxVisitValues = maxVisitValues;
  }
 
     @Override
@@ -55,10 +55,10 @@ public class PlacesListAdapter extends BaseAdapter {
             singlePlaceViewHolder = (SinglePlaceViewHolder) placeItem.getTag();
         }
 
-        PlaceModel model = filteredPlaces.get(position);
+        final PlaceModel model = filteredPlaces.get(position);
 
         singlePlaceViewHolder.placeName.setText(model.getPlaceName());
-        String l = context.getString(R.string.v_len)+" "+ maxVisitValue;
+        String l = context.getString(R.string.v_len)+" "+ maxVisitValues.get(position);
         singlePlaceViewHolder.visitLengthValue.setText(l);
 
         String at;
@@ -71,7 +71,16 @@ public class PlacesListAdapter extends BaseAdapter {
         singlePlaceViewHolder.rating.setMax(5);
         singlePlaceViewHolder.rating.setRating(model.getRating());
 
+
+
         return placeItem;
+    }
+
+    public void updateAdapter(List<PlaceModel> places, ArrayList<String> travelLength, ArrayList<String> maxVisitValues){
+        this.filteredPlaces = places;
+        this.travelLenght = travelLength;
+        this.maxVisitValues = maxVisitValues;
+        this.notifyDataSetChanged();
     }
 
 

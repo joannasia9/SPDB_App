@@ -1,4 +1,4 @@
-package com.spdb.spdb_app.helpfulComponents;
+package com.spdb.spdb_app.helpers;
 
 import android.Manifest;
 import android.app.Activity;
@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceDetectionClient;
@@ -19,7 +18,7 @@ import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.spdb.spdb_app.MainActivity;
+import com.spdb.spdb_app.FormActivity;
 import com.spdb.spdb_app.R;
 
 public class PlacesSelectionHelper {
@@ -53,7 +52,7 @@ public class PlacesSelectionHelper {
             } else {
                 ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET},
-                        MainActivity.LOCATION_PERMISSIONS_REQUEST);
+                        FormActivity.LOCATION_PERMISSIONS_REQUEST);
             }
         }
 
@@ -68,7 +67,7 @@ public class PlacesSelectionHelper {
                     public void onClick(DialogInterface dialog, int which) {
                         ActivityCompat.requestPermissions(activity,
                                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                                MainActivity.LOCATION_PERMISSIONS_REQUEST);
+                                FormActivity.LOCATION_PERMISSIONS_REQUEST);
                     }
                 })
                 .setNegativeButton(R.string.quit, new DialogInterface.OnClickListener() {
@@ -108,7 +107,7 @@ public class PlacesSelectionHelper {
                           != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(activity,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET},
-                        MainActivity.LOCATION_PERMISSIONS_REQUEST);
+                        FormActivity.LOCATION_PERMISSIONS_REQUEST);
             } else {
 
               mPlaceDetectionClient=Places.getPlaceDetectionClient(context);

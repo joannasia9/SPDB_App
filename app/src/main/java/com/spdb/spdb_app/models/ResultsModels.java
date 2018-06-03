@@ -6,11 +6,18 @@ public class ResultsModels {
     @SerializedName("results")
     private PlaceModel[] placeModels;
 
+    @SerializedName("next_page_token")
+    private String nextPageToken;
+
     public PlaceModel[] getPlaceModels() {
         return placeModels;
     }
 
     public void setPlaceModels(PlaceModel[] placeModels) {
         this.placeModels = placeModels;
+    }
+
+    public String getNextPageToken() {
+        return nextPageToken;
     }
 }

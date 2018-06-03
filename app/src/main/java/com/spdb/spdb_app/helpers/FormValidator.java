@@ -1,4 +1,4 @@
-package com.spdb.spdb_app.helpfulComponents;
+package com.spdb.spdb_app.helpers;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.spdb.spdb_app.R;
 
 public class FormValidator {
@@ -66,7 +65,6 @@ public class FormValidator {
         // only got here if we didn't return false
         return true;
     }
-
 
     public void showAlert(){
         AlertDialog dialog = new AlertDialog.Builder(context)

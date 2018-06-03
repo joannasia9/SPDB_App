@@ -14,28 +14,6 @@
     <string name="search">Szukaj</string>
     <string name="place_name">Nazwa miejsca</string>
     <string name="id">Id.</string>
-
-    <string-array name="transport">
-    <item>Dowolny</item>
-    <item>Samochód</item>
-    <item>Pieszo</item>
-    <item>Rower</item> </string-array>
-
-    <string-array name="transit_mode">
-        <item>rail</item>
-        <item>bus</item>
-        <item>subway</item>
-        <item>train</item>
-        <item>tram</item>
-    </string-array>
-
-    <string-array name="mode">
-        <item>transit</item>
-        <item>driving</item>
-        <item>walking</item>
-        <item>bicycling</item>
-    </string-array>
-
     <string name="title_activity_maps">Mapa</string>
     <string name="all">Wszystkie</string>
     <string name="visit_lenght">Długość pobytu</string>
@@ -57,9 +35,25 @@
     <string name="wrong_v">Niepoprawna wartość</string>
     <string name="select_start_place">Wybierz punkt początkowy</string>
     <string name="v_len">Czas trwania wizyty:</string>
-    <string name="arr_time">Dotrzesz za około:</string>
+    <string name="arr_time">Dotrzesz w ciągu:</string>
     <string name="no_spec">Nie określono dokładnego czasu dotarcia</string>
+    <string name="save_selection">Zapisz</string>
+    <string name="def_ault">Domyślna</string>
+    <string name="arrival_time">Czas wyjazdu:</string>
 
+    <string-array name="transport">
+        <item>Dowolny</item>
+        <item>Samochód</item>
+        <item>Pieszo</item>
+        <item>Rower</item>
+    </string-array>
+
+    <string-array name="mode">
+        <item>transit</item>
+        <item>driving</item>
+        <item>walking</item>
+        <item>bicycling</item>
+    </string-array>
 
     <string-array name="categories_eng">
         <item>subway_station</item>
@@ -135,5 +129,15 @@
         <item>Stacja kolejowa</item>
         <item>Biuro podróży</item>
         <item>Ogród zoologiczny</item>
+    </string-array>
+
+    <string-array name="form_items">
+        <item>Środek transportu</item>
+        <item>Termin podróży</item>
+        <item>Czas podróży</item>
+        <item>Długość pobytu</item>
+        <item>Kategoria miejsc</item>
+        <item>Odległość</item>
+        <item>Rating</item>
     </string-array>
 </resources>
