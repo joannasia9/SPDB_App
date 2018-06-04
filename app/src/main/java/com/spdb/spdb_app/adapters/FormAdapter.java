@@ -112,6 +112,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         onValueChangedListener.onValueChanged(0,viewHolder.getTransportWayPosition());
+                        viewHolder.layout.toggle();
                     }
                 });
 
@@ -149,6 +150,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         onValueChangedListener.onValueChanged(1, calendarViewHolder.getSelectedDate());
+                        calendarViewHolder.calendarLayout.toggle();
                     }
                 });
 
@@ -186,6 +188,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     public void onClick(View v) {
                         onValueChangedListener.onValueChanged(2,travelTimeViewHolder.getChangedTravelTime());
                         onValueChangedListener.onValueChanged(7,travelTimeViewHolder.getArrivalTimeSec());
+                        travelTimeViewHolder.layout.toggle();
                     }
                 });
             }
@@ -221,6 +224,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         onValueChangedListener.onValueChanged(3, stayTimeViewHolder.getChangedTravelTime());
+                        stayTimeViewHolder.layout.toggle();
                     }
                 });
             }
@@ -249,6 +253,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         onValueChangedListener.onValueChanged(4,categoryViewHolder.getChangedCategory());
+                        categoryViewHolder.layout.toggle();
                     }
                 });
                 categoryViewHolder.expButton.setOnClickListener(new View.OnClickListener() {
@@ -289,6 +294,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         onValueChangedListener.onValueChanged(5,distanceViewHolder.getChangedDistance());
+                        distanceViewHolder.layout.toggle();
                     }
                 });
             }
@@ -323,6 +329,7 @@ public class FormAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     @Override
                     public void onClick(View v) {
                         onValueChangedListener.onValueChanged(6,ratingViewHolder.getRatingValue());
+                        ratingViewHolder.layout.toggle();
                     }
                 });
             }

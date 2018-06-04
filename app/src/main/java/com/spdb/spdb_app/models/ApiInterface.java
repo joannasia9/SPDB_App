@@ -15,7 +15,7 @@ public interface ApiInterface {
     @GET("place/details/json?")
     Call<PlaceDetailsModel> getPlaceDetails(@Query("placeid") String placeId, @Query("key") String apikey);
 
-    @GET("maps/api/directions/json?")
-    Call<RouteModel> getRoute(@Query("origin") String origin, @Query("mode") String mode, @Query("key") String apiKey);
+    @GET("directions/json?")
+    Call<RouteModel> getRoute(@Query("origin") String origin, @Query("destination") String destination,@Query("mode") String mode, @Query("key") String apiKey);
 
 }

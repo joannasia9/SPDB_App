@@ -28,7 +28,6 @@ import com.spdb.spdb_app.helpers.PlacesSelectionHelper;
 import com.spdb.spdb_app.models.ApiClient;
 import com.spdb.spdb_app.models.ApiInterface;
 import com.spdb.spdb_app.models.Availability;
-import com.spdb.spdb_app.models.DetailsModel;
 import com.spdb.spdb_app.models.ElementModel;
 import com.spdb.spdb_app.models.PlaceDetailsModel;
 import com.spdb.spdb_app.models.PlaceModel;
@@ -245,7 +244,12 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                         //Filter places
                         if(allPlacesFound.size()>0){
                             filterPlacesByTravelTimeAndDistance(apiInterface, travelTimeSecs, distance, allPlacesFound);
-                        } else showToastOnUI();
+                        } else {
+                            autocompleteFragment.setText("");
+                            formAdapter.notifyDataSetChanged();
+                            initiateVariables();
+                            showToastOnUI();
+                        }
                     }
 
                 }
@@ -311,7 +315,12 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
                         if(allFilteredPlaces.size()>0){
                             filterPlacesByVisitLegthAndArrivalTime(filteredElementModels, allFilteredPlaces);
-                        } else showToastOnUI();
+                        } else {
+                            autocompleteFragment.setText("");
+                            formAdapter.notifyDataSetChanged();
+                            initiateVariables();
+                            showToastOnUI();
+                        }
 
                     }
 
@@ -329,7 +338,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
     private void filterPlacesByVisitLegthAndArrivalTime(ArrayList<ElementModel> placesToFilter, List<PlaceModel> places) {
         ArrayList<PlaceModel> filtered = new ArrayList<>();
         Availability availability = new Availability();
-
+        //TODO filtering by visitLength and arrival time
         //Set random availability
         switch (placeType) {
             case "subway_station":
@@ -353,43 +362,48 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         long availabilityStart = availability.getFromHour() * 3600;
         long availabilityEnd = availability.getToHour() * 3600;
 
-        int i=0;
-        ArrayList<String> visitTimeValues = new ArrayList<>();
-        travelLength = new ArrayList<>();
-
-        for(ElementModel model : placesToFilter){
-            filtered.add(places.get(i));
-            visitTimeValues.add(getTimeValue(model.getDuration().getValueValue()));
-            travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-            i++;
-        }
-//        int i = 0;
+//        int i=0;
 //        ArrayList<String> visitTimeValues = new ArrayList<>();
 //        travelLength = new ArrayList<>();
-//        for (ElementModel model : placesToFilter) {
-//            long arrivalTime = arrivalTimeSec + model.getDuration().getValueValue();
-//            long timeVisitEnd = arrivalTime + visitMaxLength;
 //
-//            if (availabilityStart < arrivalTime && arrivalTime < availabilityEnd) {
-//                if (timeVisitEnd < availabilityEnd) {
-//                    filtered.add(places.get(i));
-//                    Log.e("Filtered 3: ", places.get(i).getPlaceName());
-//                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-//                    visitTimeValues.add(getTimeValue(visitMaxLength));
-//                } else {
-//                    filtered.add(places.get(i));
-//                    Log.e("Filtered 3a: ", places.get(i).getPlaceName());
-//                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-//                    visitTimeValues.add(getTimeValue(availabilityEnd - arrivalTime));
-//                }
-//            }
+//        for(ElementModel model : placesToFilter){
+//            filtered.add(places.get(i));
+//            visitTimeValues.add(getTimeValue(model.getDuration().getValueValue()));
+//            travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
 //            i++;
 //        }
+        int i = 0;
+        ArrayList<String> visitTimeValues = new ArrayList<>();
+        travelLength = new ArrayList<>();
+        for (ElementModel model : placesToFilter) {
+            long arrivalTime = arrivalTimeSec + model.getDuration().getValueValue();
+            long timeVisitEnd = arrivalTime + visitMaxLength;
+
+            if (availabilityStart < arrivalTime && arrivalTime < availabilityEnd) {
+                if (timeVisitEnd < availabilityEnd) {
+                    filtered.add(places.get(i));
+                    Log.e("Filtered 3: ", places.get(i).getPlaceName());
+                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
+                    visitTimeValues.add(getTimeValue(visitMaxLength));
+                } else {
+                    filtered.add(places.get(i));
+                    Log.e("Filtered 3a: ", places.get(i).getPlaceName());
+                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
+                    visitTimeValues.add(getTimeValue(availabilityEnd - arrivalTime));
+                }
+            }
+            i++;
+        }
 
         // Show results
         if (filtered.size() > 0) {
             showFilteredPlacesListed(mainContext, filtered, travelLength, visitTimeValues);
-        } else showToastOnUI();
+        } else {
+            autocompleteFragment.setText("");
+            formAdapter.notifyDataSetChanged();
+            initiateVariables();
+            showToastOnUI();
+        }
     }
 
     private String getTimeValue(long seconds) {
@@ -410,13 +424,13 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         Random random = new Random();
         switch (day) {
             case "sobota":
-                fromFrom += 2;
-                toTo -= 2;
+                fromFrom += 1;
+                toTo -= 1;
 
                 break;
             case "niedziela":
-                fromFrom += 2;
-                toTo -= 2;
+                fromFrom += 1;
+                toTo -= 1;
                 break;
             default:
                 break;
@@ -538,24 +552,40 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                     d.setContentView(R.layout.dialog_place_details);
 
                     TextView name = d.findViewById(R.id.placeName);
-                    name.setText(model.getResult().getPlaceName());
+                    if(model.getResult()!=null){
+                        if(model.getResult().getPlaceName()!=null||!model.getResult().getPlaceName().equals("")){
+                            name.setText(model.getResult().getPlaceName());
+                        } else  name.setText("Brak");
 
-                    TextView lngLat = d.findViewById(R.id.lngLat);
-                    String lnglat = "Szerokość geograficzna: " + model.getResult().getGeometry().getLocationModel().getLat()
-                            +"\n"+ "Długość geograficzna: "+model.getResult().getGeometry().getLocationModel().getLng();
-                    lngLat.setText(lnglat);
+                        TextView lngLat = d.findViewById(R.id.lngLat);
 
-                    TextView address = d.findViewById(R.id.address);
-                    String adress = "Adres: "+ model.getResult().getAddress();
-                    address.setText(adress);
+                        if(model.getResult().getGeometry().getLocationModel()!=null){
+                            String lnglat = "Szerokość geograficzna: " + model.getResult().getGeometry().getLocationModel().getLat()
+                                    +"\n"+ "Długość geograficzna: "+model.getResult().getGeometry().getLocationModel().getLng();
+                            lngLat.setText(lnglat);
+                        } else  lngLat.setText("Wpółrzędne: Brak");
 
-                    TextView rating=d.findViewById(R.id.rating);
-                    String r = "Rating: "+ model.getResult().getRating();
-                    rating.setText(r);
 
-                    TextView phone = d.findViewById(R.id.phoneNo);
-                    String p = "Tel. " + model.getResult().getPhoneNumber();
-                    phone.setText(p);
+                        TextView address = d.findViewById(R.id.address);
+
+                        if(model.getResult().getAddress()!=null||!model.getResult().getAddress().equals("")){
+                            String adress = "Adres: "+ model.getResult().getAddress();
+                            address.setText(adress);
+                        } else  address.setText("Adres: Brak");
+
+
+                        TextView rating=d.findViewById(R.id.rating);
+                        String r = "Rating: "+ model.getResult().getRating();
+                        rating.setText(r);
+
+                        TextView phone = d.findViewById(R.id.phoneNo);
+
+                        if(model.getResult().getPhoneNumber()!=null||!model.getResult().getPhoneNumber().equals("")){
+                            String p = "Tel. " + model.getResult().getPhoneNumber();
+                            phone.setText(p);
+                        } else  phone.setText("Telefon: Brak");
+
+                    }
 
                     Button okBtn = d.findViewById(R.id.okBtn);
                     okBtn.setOnClickListener(new View.OnClickListener() {

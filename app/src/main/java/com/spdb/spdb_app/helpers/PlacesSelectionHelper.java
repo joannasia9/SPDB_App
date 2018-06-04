@@ -110,7 +110,7 @@ public class PlacesSelectionHelper {
                         FormActivity.LOCATION_PERMISSIONS_REQUEST);
             } else {
 
-              mPlaceDetectionClient=Places.getPlaceDetectionClient(context);
+              mPlaceDetectionClient = Places.getPlaceDetectionClient(context);
 
               Task<PlaceLikelihoodBufferResponse> placeResult = mPlaceDetectionClient.getCurrentPlace(null);
               placeResult.addOnCompleteListener(new OnCompleteListener<PlaceLikelihoodBufferResponse>() {
