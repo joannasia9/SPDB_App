@@ -100,7 +100,6 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
     //Helpful variables
     private boolean isMorePagesAvailable;
-    private DateFormatSymbols symbols;
     private PlacesListAdapter placesListAdapter;
     private long visitMaxLength;
     private long arrivalTimeSec;
@@ -197,16 +196,16 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
     private void initiateVariables() {
         isMorePagesAvailable = false;
-        currentLocationString = "";
+        currentLocationString = "52.1579628,21.0322759";
         distance = 1000; //1km
         placeType = "bar";
         travelTimeSecs = 3600; // 1h
         visitMaxLength = 600; // 10min
         travelMode = "driving";
         rating = 0;
-        API_KEY = getString(R.string.google_maps_key);
+        API_KEY = "AIzaSyBvRbS7PN16oBpelnCNSSQk4-EURbDAuVY";//getString(R.string.google_maps_key);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
-        symbols = new DateFormatSymbols(new Locale("pl"));
+        DateFormatSymbols symbols = new DateFormatSymbols(new Locale("pl"));
         travelDay = symbols.getWeekdays()[Calendar.getInstance().get(Calendar.DAY_OF_WEEK)];
 
         int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
@@ -227,10 +226,6 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                         //List of places found by radius and place_type
                         resultsModels = response.body();
                         assert resultsModels != null;
-                        //TODO requesting more places pages if available
-
-                        isMorePagesAvailable = resultsModels.getNextPageToken() != null && !resultsModels.getNextPageToken().equals("");
-                        Log.e("IS_MORE_PAGES: ", String.valueOf(isMorePagesAvailable));
 
                         //Filtering by rating
                         allPlacesFound = new ArrayList<>();
@@ -241,15 +236,22 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                             }
                         }
 
-                        //Filter places
-                        if(allPlacesFound.size()>0){
-                            filterPlacesByTravelTimeAndDistance(apiInterface, travelTimeSecs, distance, allPlacesFound);
-                        } else {
-                            autocompleteFragment.setText("");
-                            formAdapter.notifyDataSetChanged();
-                            initiateVariables();
-                            showToastOnUI();
-                        }
+                        isMorePagesAvailable = resultsModels.getNextPageToken() != null && !resultsModels.getNextPageToken().equals("");
+                        Log.e("IS_MORE_PAGES: ", String.valueOf(isMorePagesAvailable));
+
+                         if (isMorePagesAvailable) getMorePlaces(rating,resultsModels.getNextPageToken(),API_KEY);
+
+                            //Filter places by travel time and distance
+                            if(allPlacesFound.size()>0){
+                                filterPlacesByTravelTimeAndDistance(apiInterface, travelTimeSecs, distance, allPlacesFound);
+                            } else {
+                                //Clear all data
+                                autocompleteFragment.setText("");
+                                formAdapter.notifyDataSetChanged();
+                                initiateVariables();
+                                showToastOnUI();
+                            }
+
                     }
 
                 }
@@ -262,6 +264,32 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
         } else validator.showAlert();
 
+    }
+
+    private void getMorePlaces(final float rating, String nextPageToken, final String API_KEY){
+        Call<ResultsModels> morePlacesRequest = apiInterface.getMorePlaces(nextPageToken,API_KEY);
+        morePlacesRequest.enqueue(new Callback<ResultsModels>() {
+            @Override
+            public void onResponse(@NonNull Call<ResultsModels> call, @NonNull Response<ResultsModels> response) {
+                resultsModels = response.body();
+                if(resultsModels!=null){
+                    isMorePagesAvailable = resultsModels.getNextPageToken() != null && !resultsModels.getNextPageToken().equals("");
+                    Log.e("IS_MORE_PAGES: ", String.valueOf(isMorePagesAvailable));
+                    for (PlaceModel placeModel : resultsModels.getPlaceModels()) {
+                        if (placeModel.getRating() > rating) {
+                            allPlacesFound.add(placeModel);
+                            Log.e("Filtered more 1",placeModel.getPlaceName());
+                        }
+                    }
+                    if(isMorePagesAvailable) getMorePlaces(rating,resultsModels.getNextPageToken(),API_KEY);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResultsModels> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void filterPlacesByTravelTimeAndDistance(ApiInterface apiInterface,
@@ -338,6 +366,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
     private void filterPlacesByVisitLegthAndArrivalTime(ArrayList<ElementModel> placesToFilter, List<PlaceModel> places) {
         ArrayList<PlaceModel> filtered = new ArrayList<>();
         Availability availability = new Availability();
+
         //TODO filtering by visitLength and arrival time
         //Set random availability
         switch (placeType) {
