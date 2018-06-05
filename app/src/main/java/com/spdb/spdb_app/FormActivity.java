@@ -362,38 +362,38 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         long availabilityStart = availability.getFromHour() * 3600;
         long availabilityEnd = availability.getToHour() * 3600;
 
-//        int i=0;
-//        ArrayList<String> visitTimeValues = new ArrayList<>();
-//        travelLength = new ArrayList<>();
-//
-//        for(ElementModel model : placesToFilter){
-//            filtered.add(places.get(i));
-//            visitTimeValues.add(getTimeValue(model.getDuration().getValueValue()));
-//            travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-//            i++;
-//        }
-        int i = 0;
+        int i=0;
         ArrayList<String> visitTimeValues = new ArrayList<>();
         travelLength = new ArrayList<>();
-        for (ElementModel model : placesToFilter) {
-            long arrivalTime = arrivalTimeSec + model.getDuration().getValueValue();
-            long timeVisitEnd = arrivalTime + visitMaxLength;
 
-            if (availabilityStart < arrivalTime && arrivalTime < availabilityEnd) {
-                if (timeVisitEnd < availabilityEnd) {
-                    filtered.add(places.get(i));
-                    Log.e("Filtered 3: ", places.get(i).getPlaceName());
-                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-                    visitTimeValues.add(getTimeValue(visitMaxLength));
-                } else {
-                    filtered.add(places.get(i));
-                    Log.e("Filtered 3a: ", places.get(i).getPlaceName());
-                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-                    visitTimeValues.add(getTimeValue(availabilityEnd - arrivalTime));
-                }
-            }
+        for(ElementModel model : placesToFilter){
+            filtered.add(places.get(i));
+            visitTimeValues.add(getTimeValue(model.getDuration().getValueValue()));
+            travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
             i++;
         }
+//        int i = 0;
+//        ArrayList<String> visitTimeValues = new ArrayList<>();
+//        travelLength = new ArrayList<>();
+//        for (ElementModel model : placesToFilter) {
+//            long arrivalTime = arrivalTimeSec + model.getDuration().getValueValue();
+//            long timeVisitEnd = arrivalTime + visitMaxLength;
+//
+//            if (availabilityStart < arrivalTime && arrivalTime < availabilityEnd) {
+//                if (timeVisitEnd < availabilityEnd) {
+//                    filtered.add(places.get(i));
+//                    Log.e("Filtered 3: ", places.get(i).getPlaceName());
+//                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
+//                    visitTimeValues.add(getTimeValue(visitMaxLength));
+//                } else {
+//                    filtered.add(places.get(i));
+//                    Log.e("Filtered 3a: ", places.get(i).getPlaceName());
+//                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
+//                    visitTimeValues.add(getTimeValue(availabilityEnd - arrivalTime));
+//                }
+//            }
+//            i++;
+//        }
 
         // Show results
         if (filtered.size() > 0) {
@@ -526,9 +526,8 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
                     intent.putExtra("mode", travelMode);
                     intent.putExtra("destination",latLng);
-
-                    String origin = "place_id:"+placeId;
-                    intent.putExtra("origin",origin);
+                    intent.putExtra("address",model.getResult().getAddress());
+                    intent.putExtra("origin",currentLocationString);
                     startActivity(intent);
                 }
             }
