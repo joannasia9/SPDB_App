@@ -196,14 +196,14 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
     private void initiateVariables() {
         isMorePagesAvailable = false;
-        currentLocationString = "52.1579628,21.0322759";
+        currentLocationString = "";
         distance = 1000; //1km
         placeType = "bar";
         travelTimeSecs = 3600; // 1h
         visitMaxLength = 600; // 10min
         travelMode = "driving";
         rating = 0;
-        API_KEY = "AIzaSyBvRbS7PN16oBpelnCNSSQk4-EURbDAuVY";//getString(R.string.google_maps_key);
+        API_KEY = getString(R.string.google_maps_key);
         apiInterface = ApiClient.getClient().create(ApiInterface.class);
         DateFormatSymbols symbols = new DateFormatSymbols(new Locale("pl"));
         travelDay = symbols.getWeekdays()[Calendar.getInstance().get(Calendar.DAY_OF_WEEK)];
