@@ -209,7 +209,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         isMorePagesAvailable = false;
         currentLocationString = "";
         locationSetup = false;
-        distance = 1000; //1km
+        distance = 2000; //1km
         placeType = "bar";
         travelTimeSecs = 3600; // 1h
         visitMaxLength = 600; // 10min
