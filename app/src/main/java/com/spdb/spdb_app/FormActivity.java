@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,7 +65,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         @Override
         public void onPlaceReceived(CharSequence receivedPlaceName, Place place) {
             autocompleteFragment.setText(receivedPlaceName);
-            if(place!=null){
+            if (place != null) {
                 currentLocationString = place.getLatLng().latitude + "," + place.getLatLng().longitude;
                 locationSetup = true;
             } else {
@@ -222,7 +221,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
         int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         int m = Calendar.getInstance().get(Calendar.MINUTE);
-        arrivalTimeSec = h*3600+m*60;
+        arrivalTimeSec = h * 3600 + m * 60;
     }
 
     public void searchPlaces(View view) {
@@ -244,25 +243,26 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                         for (PlaceModel placeModel : resultsModels.getPlaceModels()) {
                             if (placeModel.getRating() > rating) {
                                 allPlacesFound.add(placeModel);
-                                Log.e("Filtered 1",placeModel.getPlaceName());
+                                Log.e("Filtered 1", placeModel.getPlaceName());
                             }
                         }
 
                         isMorePagesAvailable = resultsModels.getNextPageToken() != null && !resultsModels.getNextPageToken().equals("");
                         Log.e("IS_MORE_PAGES: ", String.valueOf(isMorePagesAvailable));
 
-                         if (isMorePagesAvailable) getMorePlaces(rating,resultsModels.getNextPageToken(),API_KEY);
+                        if (isMorePagesAvailable)
+                            getMorePlaces(rating, resultsModels.getNextPageToken(), API_KEY);
 
-                            //Filter places by travel time and distance
-                            if(allPlacesFound.size()>0){
-                                filterPlacesByTravelTimeAndDistance(apiInterface, travelTimeSecs, distance, allPlacesFound);
-                            } else {
-                                //Clear all data
-                                autocompleteFragment.setText("");
-                                formAdapter.notifyDataSetChanged();
-                                initiateVariables();
-                                showToastOnUI();
-                            }
+                        //Filter places by travel time and distance
+                        if (allPlacesFound.size() > 0) {
+                            filterPlacesByTravelTimeAndDistance(apiInterface, travelTimeSecs, distance, allPlacesFound);
+                        } else {
+                            //Clear all data
+                            autocompleteFragment.setText("");
+                            formAdapter.notifyDataSetChanged();
+                            initiateVariables();
+                            showToastOnUI();
+                        }
 
                     }
 
@@ -278,22 +278,23 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
     }
 
-    private void getMorePlaces(final float rating, String nextPageToken, final String API_KEY){
-        Call<ResultsModels> morePlacesRequest = apiInterface.getMorePlaces(nextPageToken,API_KEY);
+    private void getMorePlaces(final float rating, String nextPageToken, final String API_KEY) {
+        Call<ResultsModels> morePlacesRequest = apiInterface.getMorePlaces(nextPageToken, API_KEY);
         morePlacesRequest.enqueue(new Callback<ResultsModels>() {
             @Override
             public void onResponse(@NonNull Call<ResultsModels> call, @NonNull Response<ResultsModels> response) {
                 resultsModels = response.body();
-                if(resultsModels!=null){
+                if (resultsModels != null) {
                     isMorePagesAvailable = resultsModels.getNextPageToken() != null && !resultsModels.getNextPageToken().equals("");
                     Log.e("IS_MORE_PAGES: ", String.valueOf(isMorePagesAvailable));
                     for (PlaceModel placeModel : resultsModels.getPlaceModels()) {
                         if (placeModel.getRating() > rating) {
                             allPlacesFound.add(placeModel);
-                            Log.e("Filtered more 1",placeModel.getPlaceName());
+                            Log.e("Filtered more 1", placeModel.getPlaceName());
                         }
                     }
-                    if(isMorePagesAvailable) getMorePlaces(rating,resultsModels.getNextPageToken(),API_KEY);
+                    if (isMorePagesAvailable)
+                        getMorePlaces(rating, resultsModels.getNextPageToken(), API_KEY);
                 }
             }
 
@@ -343,7 +344,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                                             if (elementModels[i].getDistance().getValueValue() < selectedDistance
                                                     && elementModels[i].getDuration().getValueValue() < selectedTime) {
                                                 allFilteredPlaces.add(placesToFilter.get(i));
-                                                Log.e("Filtered 2: ", placesToFilter.get(i).getPlaceName() );
+                                                Log.e("Filtered 2: ", placesToFilter.get(i).getPlaceName());
                                                 filteredElementModels.add(elementModels[i]);
                                             }
                                         }
@@ -353,7 +354,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                             }
                         }
 
-                        if(allFilteredPlaces.size()>0){
+                        if (allFilteredPlaces.size() > 0) {
                             filterPlacesByVisitLegthAndArrivalTime(filteredElementModels, allFilteredPlaces);
                         } else {
                             autocompleteFragment.setText("");
@@ -408,8 +409,8 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
             long departureTime = arrivalTimeSec + model.getDuration().getValueValue();
             long timeVisitEnd = departureTime + visitMaxLength;
 
-            if(availabilityStart <= departureTime){
-                if(departureTime < availabilityEnd){
+            if (availabilityStart <= departureTime) {
+                if (departureTime < availabilityEnd) {
                     if (timeVisitEnd <= availabilityEnd) {
                         filtered.add(places.get(i));
                         Log.e("Filtered 3: ", places.get(i).getPlaceName());
@@ -425,11 +426,11 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
             } else {
                 filtered.add(places.get(i));
-                long beforeOpenMins = Math.round((availabilityStart - departureTime)/60);
+                long beforeOpenMins = Math.round((availabilityStart - departureTime) / 60);
                 String text;
-                if(beforeOpenMins>60){
-                    double j = Math.floor(beforeOpenMins/60);
-                    text = placesToFilter.get(i).getDuration().getTextValue() + j + "h " + (beforeOpenMins - 60*j) + "min przed otwarciem.";
+                if (beforeOpenMins > 60) {
+                    double j = Math.floor(beforeOpenMins / 60);
+                    text = placesToFilter.get(i).getDuration().getTextValue() + j + "h " + (beforeOpenMins - 60 * j) + "min przed otwarciem.";
                 } else {
                     text = placesToFilter.get(i).getDuration().getTextValue() + beforeOpenMins + "min przed otwarciem.";
                 }
@@ -524,7 +525,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         dialog.show();
     }
 
-    private void showOptionsDialog(final String placeId){
+    private void showOptionsDialog(final String placeId) {
         final Dialog dialog = new Dialog(mainContext);
         dialog.setContentView(R.layout.dialog_question);
         Button showDetails = dialog.findViewById(R.id.showDetailsBtn);
@@ -556,23 +557,23 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         dialog.show();
     }
 
-    private void startMapsActivity(final String placeId){
-        Call<PlaceDetailsModel> placeDetailsModelCall = apiInterface.getPlaceDetails(placeId,API_KEY);
+    private void startMapsActivity(final String placeId) {
+        Call<PlaceDetailsModel> placeDetailsModelCall = apiInterface.getPlaceDetails(placeId, API_KEY);
 
         placeDetailsModelCall.enqueue(new Callback<PlaceDetailsModel>() {
             @Override
             public void onResponse(Call<PlaceDetailsModel> call, Response<PlaceDetailsModel> response) {
                 PlaceDetailsModel model = response.body();
-                if(model!=null){
-                    Intent intent = new Intent(mainContext,MapsActivity.class);
+                if (model != null) {
+                    Intent intent = new Intent(mainContext, MapsActivity.class);
 
                     String latLng = model.getResult().getGeometry().getLocationModel().getLat()
-                            +","+model.getResult().getGeometry().getLocationModel().getLng();
+                            + "," + model.getResult().getGeometry().getLocationModel().getLng();
 
                     intent.putExtra("mode", travelMode);
-                    intent.putExtra("destination",latLng);
-                    intent.putExtra("address",model.getResult().getAddress());
-                    intent.putExtra("origin",currentLocationString);
+                    intent.putExtra("destination", latLng);
+                    intent.putExtra("address", model.getResult().getAddress());
+                    intent.putExtra("origin", currentLocationString);
                     startActivity(intent);
                 }
             }
@@ -584,50 +585,50 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         });
     }
 
-    private void showSinglePlaceDetails(String placeId){
-        Call<PlaceDetailsModel> placeDetailsRequest = apiInterface.getPlaceDetails(placeId,API_KEY);
+    private void showSinglePlaceDetails(String placeId) {
+        Call<PlaceDetailsModel> placeDetailsRequest = apiInterface.getPlaceDetails(placeId, API_KEY);
 
         placeDetailsRequest.enqueue(new Callback<PlaceDetailsModel>() {
             @Override
             public void onResponse(@NonNull Call<PlaceDetailsModel> call, @NonNull Response<PlaceDetailsModel> response) {
                 PlaceDetailsModel model = response.body();
-                if(model!=null){
+                if (model != null) {
                     final Dialog d = new Dialog(mainContext);
                     d.setContentView(R.layout.dialog_place_details);
 
                     TextView name = d.findViewById(R.id.placeName);
-                    if(model.getResult()!=null){
-                        if(model.getResult().getPlaceName()!=null||!model.getResult().getPlaceName().equals("")){
+                    if (model.getResult() != null) {
+                        if (model.getResult().getPlaceName() != null || !model.getResult().getPlaceName().equals("")) {
                             name.setText(model.getResult().getPlaceName());
-                        } else  name.setText("Brak");
+                        } else name.setText("Brak");
 
                         TextView lngLat = d.findViewById(R.id.lngLat);
 
-                        if(model.getResult().getGeometry().getLocationModel()!=null){
+                        if (model.getResult().getGeometry().getLocationModel() != null) {
                             String lnglat = "Szerokość geograficzna: " + model.getResult().getGeometry().getLocationModel().getLat()
-                                    +"\n"+ "Długość geograficzna: "+model.getResult().getGeometry().getLocationModel().getLng();
+                                    + "\n" + "Długość geograficzna: " + model.getResult().getGeometry().getLocationModel().getLng();
                             lngLat.setText(lnglat);
-                        } else  lngLat.setText("Wpółrzędne: Brak");
+                        } else lngLat.setText("Wpółrzędne: Brak");
 
 
                         TextView address = d.findViewById(R.id.address);
 
-                        if(model.getResult().getAddress()!=null||!model.getResult().getAddress().equals("")){
-                            String adress = "Adres: "+ model.getResult().getAddress();
+                        if (model.getResult().getAddress() != null || !model.getResult().getAddress().equals("")) {
+                            String adress = "Adres: " + model.getResult().getAddress();
                             address.setText(adress);
-                        } else  address.setText("Adres: Brak");
+                        } else address.setText("Adres: Brak");
 
 
-                        TextView rating=d.findViewById(R.id.rating);
-                        String r = "Rating: "+ model.getResult().getRating();
+                        TextView rating = d.findViewById(R.id.rating);
+                        String r = "Rating: " + model.getResult().getRating();
                         rating.setText(r);
 
                         TextView phone = d.findViewById(R.id.phoneNo);
 
-                        if(model.getResult().getPhoneNumber()!=null||!model.getResult().getPhoneNumber().equals("")){
+                        if (model.getResult().getPhoneNumber() != null && !model.getResult().getPhoneNumber().equals("")) {
                             String p = "Tel. " + model.getResult().getPhoneNumber();
                             phone.setText(p);
-                        } else  phone.setText("Telefon: Brak");
+                        } else phone.setText("Telefon: Brak");
 
                     }
 
