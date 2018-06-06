@@ -66,7 +66,13 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         @Override
         public void onPlaceReceived(CharSequence receivedPlaceName, Place place) {
             autocompleteFragment.setText(receivedPlaceName);
-            currentLocationString = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+            if(place!=null){
+                currentLocationString = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                locationSetup = true;
+            } else {
+                currentLocationString = "";
+                locationSetup = false;
+            }
 
         }
 
@@ -103,6 +109,8 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
     private PlacesListAdapter placesListAdapter;
     private long visitMaxLength;
     private long arrivalTimeSec;
+    private boolean locationSetup = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +122,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
         //AutocompleteFragment settings
         placesSelectionHelper = new PlacesSelectionHelper(this, this);
+        placesSelectionHelper.askForPermissions();
 
         autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autoCompletePlace);
@@ -123,6 +132,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
             public void onPlaceSelected(Place place) {
                 String coordinates = place.getLatLng().toString();
                 currentLocationString = place.getLatLng().latitude + "," + place.getLatLng().longitude;
+                locationSetup = true;
                 Log.e("COORDINATES", "onPlaceSelected: " + coordinates);
             }
 
@@ -131,6 +141,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
             }
         });
+
 
         //Search Button settings
         searchPlacesButton = findViewById(R.id.searchPlacesB);
@@ -197,6 +208,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
     private void initiateVariables() {
         isMorePagesAvailable = false;
         currentLocationString = "";
+        locationSetup = false;
         distance = 1000; //1km
         placeType = "bar";
         travelTimeSecs = 3600; // 1h
@@ -211,12 +223,12 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         int h = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         int m = Calendar.getInstance().get(Calendar.MINUTE);
         arrivalTimeSec = h*3600+m*60;
-
     }
 
     public void searchPlaces(View view) {
         FormValidator validator = new FormValidator(this);
-        if (!currentLocationString.equals("")) {
+
+        if (!currentLocationString.equals("") && locationSetup) {
             //Search places with specified placeType and distance from selected location - currentLocationString
             Call<ResultsModels> placesRequest = apiInterface.getPlaces(currentLocationString, distance, placeType, rating, API_KEY);
             placesRequest.enqueue(new Callback<ResultsModels>() {
@@ -362,12 +374,10 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
 
     }
 
-
     private void filterPlacesByVisitLegthAndArrivalTime(ArrayList<ElementModel> placesToFilter, List<PlaceModel> places) {
         ArrayList<PlaceModel> filtered = new ArrayList<>();
         Availability availability = new Availability();
 
-        //TODO filtering by visitLength and arrival time
         //Set random availability
         switch (placeType) {
             case "subway_station":
@@ -383,7 +393,7 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                 setAvailability(availability, 1, 2, 22, 24, travelDay);
                 break;
             default:
-                setAvailability(availability, 8, 10, 16, 19, travelDay);
+                setAvailability(availability, 8, 10, 17, 19, travelDay);
                 break;
         }
 
@@ -391,38 +401,44 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
         long availabilityStart = availability.getFromHour() * 3600;
         long availabilityEnd = availability.getToHour() * 3600;
 
-        int i=0;
+        int i = 0;
         ArrayList<String> visitTimeValues = new ArrayList<>();
         travelLength = new ArrayList<>();
+        for (ElementModel model : placesToFilter) {
+            long departureTime = arrivalTimeSec + model.getDuration().getValueValue();
+            long timeVisitEnd = departureTime + visitMaxLength;
 
-        for(ElementModel model : placesToFilter){
-            filtered.add(places.get(i));
-            visitTimeValues.add(getTimeValue(model.getDuration().getValueValue()));
-            travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
+            if(availabilityStart <= departureTime){
+                if(departureTime < availabilityEnd){
+                    if (timeVisitEnd <= availabilityEnd) {
+                        filtered.add(places.get(i));
+                        Log.e("Filtered 3: ", places.get(i).getPlaceName());
+                        travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
+                        visitTimeValues.add(getTimeValue(visitMaxLength));
+                    } else {
+                        filtered.add(places.get(i));
+                        Log.e("Filtered 3a: ", places.get(i).getPlaceName());
+                        travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
+                        visitTimeValues.add(getTimeValue(availabilityEnd - departureTime));
+                    }
+                }
+
+            } else {
+                filtered.add(places.get(i));
+                long beforeOpenMins = Math.round((availabilityStart - departureTime)/60);
+                String text;
+                if(beforeOpenMins>60){
+                    double j = Math.floor(beforeOpenMins/60);
+                    text = placesToFilter.get(i).getDuration().getTextValue() + j + "h " + (beforeOpenMins - 60*j) + "min przed otwarciem.";
+                } else {
+                    text = placesToFilter.get(i).getDuration().getTextValue() + beforeOpenMins + "min przed otwarciem.";
+                }
+                travelLength.add(text);
+                visitTimeValues.add(getTimeValue(visitMaxLength));
+            }
+
             i++;
         }
-//        int i = 0;
-//        ArrayList<String> visitTimeValues = new ArrayList<>();
-//        travelLength = new ArrayList<>();
-//        for (ElementModel model : placesToFilter) {
-//            long arrivalTime = arrivalTimeSec + model.getDuration().getValueValue();
-//            long timeVisitEnd = arrivalTime + visitMaxLength;
-//
-//            if (availabilityStart < arrivalTime && arrivalTime < availabilityEnd) {
-//                if (timeVisitEnd < availabilityEnd) {
-//                    filtered.add(places.get(i));
-//                    Log.e("Filtered 3: ", places.get(i).getPlaceName());
-//                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-//                    visitTimeValues.add(getTimeValue(visitMaxLength));
-//                } else {
-//                    filtered.add(places.get(i));
-//                    Log.e("Filtered 3a: ", places.get(i).getPlaceName());
-//                    travelLength.add(placesToFilter.get(i).getDuration().getTextValue());
-//                    visitTimeValues.add(getTimeValue(availabilityEnd - arrivalTime));
-//                }
-//            }
-//            i++;
-//        }
 
         // Show results
         if (filtered.size() > 0) {

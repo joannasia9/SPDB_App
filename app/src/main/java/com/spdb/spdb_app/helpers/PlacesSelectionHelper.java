@@ -16,6 +16,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceDetectionClient;
 import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.spdb.spdb_app.FormActivity;
@@ -118,10 +119,13 @@ public class PlacesSelectionHelper {
                   public void onComplete(@NonNull Task<PlaceLikelihoodBufferResponse> task) {
                       PlaceLikelihoodBufferResponse likelyPlaces = task.getResult();
                       location = likelyPlaces.get(0).getPlace().getName();
-                      if(location!=null)callback.onPlaceReceived(location,likelyPlaces.get(0).getPlace().freeze()); else callback.onPlaceFailure(task.getException());
+                      if(location!=null) callback.onPlaceReceived(location,likelyPlaces.get(0).getPlace().freeze()); else callback.onPlaceFailure(task.getException());
                       likelyPlaces.release();
                       }
               });
+
+
+
             }
         }
     }
