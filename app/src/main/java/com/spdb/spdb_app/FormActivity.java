@@ -141,6 +141,16 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
             }
         });
 
+        autocompleteFragment.getView().findViewById(R.id.place_autocomplete_clear_button)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        currentLocationString = "";
+                        autocompleteFragment.setText("");
+                        view.setVisibility(View.GONE);
+                    }
+                });
+
 
         //Search Button settings
         searchPlacesButton = findViewById(R.id.searchPlacesB);

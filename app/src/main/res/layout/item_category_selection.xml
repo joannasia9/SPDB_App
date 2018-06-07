@@ -11,16 +11,16 @@
 
     <com.github.aakira.expandablelayout.ExpandableLinearLayout
         android:id="@+id/expandableCategory"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/catItemB"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_below="@id/catItemB"
         android:orientation="vertical"
-        app:ael_duration = "400"
-        app:ael_expanded = "false"
+        app:ael_duration="400"
+        app:ael_expanded="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +34,7 @@
             <AutoCompleteTextView
                 android:id="@+id/categoryAutocomplete"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
@@ -47,7 +47,7 @@
             <Button
                 android:id="@+id/saveCatButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"

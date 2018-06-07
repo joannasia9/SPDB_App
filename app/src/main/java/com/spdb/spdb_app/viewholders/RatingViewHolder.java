@@ -25,15 +25,15 @@ public class RatingViewHolder extends RecyclerView.ViewHolder{
         layout = itemView.findViewById(R.id.expandableRating);
 
         ratingBar.setMax(5);
+        ratingBar.setStepSize(0.2f);
         ratingBar.setRating(0.0f);
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 ratingValue = rating;
-                double r = Math.ceil(rating);
-                ratingBar.setRating((float) r);
             }
         });
+
     }
 
     public String getRatingValue(){
