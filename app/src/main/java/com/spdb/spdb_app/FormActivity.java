@@ -440,9 +440,9 @@ public class FormActivity extends MyBaseActivity implements OnValueChangedListen
                 String text;
                 if (beforeOpenMins > 60) {
                     double j = Math.floor(beforeOpenMins / 60);
-                    text = placesToFilter.get(i).getDuration().getTextValue() + j + "h " + (beforeOpenMins - 60 * j) + "min przed otwarciem.";
+                    text = placesToFilter.get(i).getDuration().getTextValue() + "\n" + j + "h " + (beforeOpenMins - 60 * j) + "min przed otwarciem.";
                 } else {
-                    text = placesToFilter.get(i).getDuration().getTextValue() + beforeOpenMins + "min przed otwarciem.";
+                    text = placesToFilter.get(i).getDuration().getTextValue() + "\n" + beforeOpenMins + "min przed otwarciem.";
                 }
                 travelLength.add(text);
                 visitTimeValues.add(getTimeValue(visitMaxLength));
