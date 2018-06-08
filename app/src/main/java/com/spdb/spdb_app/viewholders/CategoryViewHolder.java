@@ -6,12 +6,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.spdb.spdb_app.R;
 
 public class CategoryViewHolder extends RecyclerView.ViewHolder{
-    public AutoCompleteTextView textView;
+    public Spinner categorySpinner;
     public Button saveButton;
     public Button expButton;
     public ExpandableLinearLayout layout;
@@ -25,27 +26,17 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder{
         categories_pl = context.getResources().getStringArray(R.array.categories_pl);
         categories_eng = context.getResources().getStringArray(R.array.categories_eng);
 
-        textView = view.findViewById(R.id.categoryAutocomplete);
+        categorySpinner = view.findViewById(R.id.categorySpinner);
         saveButton = view.findViewById(R.id.saveCatButton);
         expButton = itemView.findViewById(R.id.catItemB);
         layout = itemView.findViewById(R.id.expandableCategory);
-
-        ArrayAdapter<String> categoriesAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, categories_pl);
-        textView.setAdapter(categoriesAdapter);
-
-
     }
 
     public String getChangedCategory(){
-        String placeType = "";
-        String tmp = textView.getText().toString().trim();
-        for (int i = 0; i < categories_pl.length; i++){
-            if(!placeType.equals("")){
-                continue;
-            }
-            if(categories_pl[i].equals(tmp)) placeType = categories_eng[i];
+        Integer itemPosition = categorySpinner.getSelectedItemPosition();
+        if (itemPosition == 0) {
+            return "";
         }
-
-        return placeType;
+        return categories_eng[itemPosition];
     }
 }
