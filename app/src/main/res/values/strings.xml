@@ -56,6 +56,7 @@
     </string-array>
 
     <string-array name="categories_eng">
+        <item></item>
         <item>subway_station</item>
         <item>airport</item>
         <item>amusement_park</item>
@@ -94,6 +95,7 @@
     </string-array>
 
     <string-array name="categories_pl">
+        <item>Dowolna</item>
         <item>Stacja metra</item>
         <item>Lotnisko</item>
         <item>Park rozrywki</item>
